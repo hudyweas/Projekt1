@@ -1,10 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class DataBase {
 	
@@ -21,7 +17,7 @@ public class DataBase {
 		}
 	}
 	
-	private void deleteQuestion(int x) { //usuwa wybrane pytanie z listy
+	private void deleteQuestion(int x) {
 		String data2[] = new String[data.length-1];
 		for(int i= 0; i<data2.length-1; i++) {
 			if(i!=x) {
@@ -34,7 +30,7 @@ public class DataBase {
 		data = Arrays.copyOf(data2, data2.length);
 	}
 	
-	private String shuffleAnswers(String line) { //przelosowuje pytania
+	private String shuffleAnswers(String line) {
 		String[] data2= line.split(";");
 		ArrayList<String> answers = new ArrayList<String>();
 		for(int i=1; i<=4;i++)
@@ -51,7 +47,7 @@ public class DataBase {
 		return end;
  	}
 	
-	public String drawQuestion() { //wybiera losowe pytanie
+	public String drawQuestion() {
 		Random random = new Random();
 		int drawn = random.nextInt(data.length);
 		System.out.println(data.length +" "+ drawn);
