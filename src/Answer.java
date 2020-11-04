@@ -6,6 +6,7 @@ public class Answer {
     public Answer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
         this.contentOfTheAnswer = contentOfTheAnswer;
         this.isItCorrectAnswer = isItCorrectAnswer;
+        
     }
 
     public String getContentOfTheAnswer() {
