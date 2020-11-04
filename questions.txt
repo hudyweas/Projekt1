@@ -1,3 +1,4 @@
+question;answer1:true/false;answer2:true/false;answer3:true/false;answer4:true/false
 Abfegr;tak:1;oczywiście:1;nie:0;bardzo:1
 rtwert;tak:0;oczywiście:1;nie:1;bardzo:1
 wertwer;tak:0;oczywiście:1;nie:1;bardzo:1

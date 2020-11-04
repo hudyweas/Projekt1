@@ -1,114 +1,119 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class Program {
-	
-	private DataBase data = new DataBase();
-	private Scanner in = new Scanner(System.in);
-	private int counter = 0;
-	private int points = 0;
-	
-	private String currentQuestion;
-	private String[] currentAnswers = new String[4];
-	private String[] currentGoodAnswers = new String[4];;
-	private boolean userAnswers[] = new boolean[4];
-	
-	private void introduction() {
-		System.out.println("Zasady i opis dzia³ania programu:\n"
-				+ "1. Test jest wielokrotnego wyboru\n"
-				+ "2. Test sk³ada siê z 20 pytañ"
-				+ "3. Mo¿na wprowadzaæ tylko jedn¹ odpowiedz na raz\n"
-				+ "4. Ka¿da pytanie, na które prawid³owo odpowiesz, daje 1 punkt\n"
-				+ "5. By przejœæ do kolejnego pytania wciœnij 'x' \n\n"
-				+ "By przejœæ dalej - wciœnij dowolny klawisz");
-		
-		in.nextLine();
-	}
-	
-	private void getQuestion() {
-		counter++;
-		String line[] = data.drawQuestion().split(";");
-		String answers[][] = new String[4][2];
-		currentQuestion = line[0];
-		
-		for(int i=0;i<4;i++) {
-			answers[i] = line[i+1].split(":");		
-			currentAnswers[i]= answers[i][0];
-			currentGoodAnswers[i]=answers[i][1];
-			this.userAnswers[i] = false;
-		}
-	}
-	
-	private void displayQuestion() {
-		System.out.println("Pytanie "+ counter +":");
-		System.out.println(currentQuestion);
-		for(int i=0;i<4;i++)
-			System.out.println((i+1)+". "+currentAnswers[i]);
-		
-		System.out.println("By przejœæ do kolejnego pytania wciœnij 'x'");
-	}
-	
-	private boolean checkAnswers() {
-		for(int i=0;i<4;i++) {
-			if(userAnswers[i] == true && currentGoodAnswers[i].contentEquals("0"))
-				return false;
-			else if(userAnswers[i] == false && currentGoodAnswers[i].contentEquals("1"))
-				return false;
-		}
-		return true;
-	}
-	
-	private void showScores() {
-		System.out.println("\nOdpowiedzia³eœ na "+points+" pytañ poprwanie.");
-	}
-	
-	public void start() {
-		introduction();
-		
-		for(int i=0; i<20;i++) {
-			getQuestion();
-			displayQuestion();
-			while(true) {
-				String next = in.nextLine();
-				
-				switch(next) {
-				case "1":
-					if(userAnswers[0] == false)
-						userAnswers[0] = true;
-					else userAnswers[0] = false;
-					break;
-					
-				case "2":
-					if(userAnswers[1] == false)
-						userAnswers[1] = true;
-					else userAnswers[1] = false;
-					break;
-					
-				case "3":
-					if(userAnswers[2] == false)
-						userAnswers[2] = true;
-					else userAnswers[2] = false;
-					break;
-					
-				case "4":
-					if(userAnswers[3] == false)
-						userAnswers[3] = true;
-					else userAnswers[3] = false;
-					break;
 
-				default:
-					break;
-				}
-				
-				if(next.contentEquals("x")) {
-					break;
-				}
-			}
-			
-			if(checkAnswers())
-				points++;
-			
-		}
-		
-		showScores();
-	}
+    private DataBase dataBase = new DataBase("questions.txt");
+
+    public void start(){
+        introduction();
+
+        Scanner in = new Scanner(System.in);
+        System.out.println("Podaj ilosc pytan:");
+        int numberOfQuestions = Integer.parseInt(in.nextLine());
+        int points = 0;
+
+        for(int questionIndex = 1; questionIndex <= numberOfQuestions; questionIndex++){
+            Question question = drawQuestion();
+            List<Answer> answers = question.getAnswers();
+
+            System.out.println("Pytanie "+questionIndex+":");
+            displayQuestion(question);
+            displayAnswers(answers);
+            System.out.println("\nAby zatwierdzic odpowiedzi i przejsc do kolejnego pytania wcisnij 'x'\n\n");
+
+            String userInput = in.nextLine();
+            userInput.toLowerCase();
+
+            while(isOneOfStrings(userInput, "x", "a", "b", "c", "d") == false){
+                System.out.println("Wprowadzony znak jest bledny");
+                userInput = in.nextLine().toLowerCase();
+            }
+
+            while (userInput.equals("x") == false){
+                while(isOneOfStrings(userInput, "x", "a", "b", "c", "d") == false){
+                    System.out.println("Wprowadzony znak jest bledny");
+                    userInput = in.nextLine().toLowerCase();
+                }
+                if(userInput.equals("x")) break;
+                changeTheApprovalOfTheAnswer(answers, userInput);
+
+                userInput = in.nextLine().toLowerCase();
+            }
+            if(isQuestionAnsweredCorrectly(answers)) points++;
+        }
+        System.out.println("Brawo! Zakonczyles test z iloscia "+points+" punktÃ³w!");
+    }
+
+    private void introduction() {
+        System.out.println("Zasady i opis dzialania programu:\n"
+                + "1. Test jest wielokrotnego wyboru\n"
+                + "2. Test sklada siÄ™ z ilosci pytan podanej przez uzytkownika\n"
+                + "3. Mozna wprowadzac tylko jedna odpowiedz na raz\n"
+                + "4. Kazde pytanie, na ktore prawidlowo odpowiesz, daje 1 punkt\n"
+                + "5. By przejsc do kolejnego pytania wcisnij 'x' \n\n"
+                + "By przejsc dalej - wcisnij dowolny klawisz");
+    }
+
+    private Question drawQuestion(){
+        Random random = new Random();
+        Question question;
+
+        do{
+            int drawnNumber = random.nextInt(dataBase.getAmountOfQuestions());
+            question = dataBase.getQuestion(drawnNumber);
+        }while(question.isHasBeenUsed() == true);
+
+        question.setHasBeenUsed(true);
+
+        return question;
+    }
+
+    private void displayQuestion(Question question){
+        System.out.println(question.getContentOfTheQuestion());
+    }
+
+    private void displayAnswers(List<Answer> answers){
+        for(int indexOfAnswer = 0; indexOfAnswer < answers.size(); indexOfAnswer++){
+            Answer answer = answers.get(indexOfAnswer);
+            final String[] ABCD = new String[]{"A", "B", "C", "D"};
+            System.out.println((ABCD[indexOfAnswer])+") "+answer.getContentOfTheAnswer());
+        }
+    }
+
+    private boolean isOneOfStrings(String string, String... args){
+        for(String arg: args){
+            if(string.equals(arg)) return true;
+        }
+        return false;
+    }
+
+    private void changeTheApprovalOfTheAnswer(List<Answer> answers, String userAnswer){
+        switch (userAnswer){
+            case "a":
+                answers.get(0).changeTheApprove();
+                break;
+            case "b":
+                answers.get(1).changeTheApprove();
+                break;
+            case "c":
+                answers.get(2).changeTheApprove();
+                break;
+            case "d":
+                answers.get(3).changeTheApprove();
+                break;
+        }
+    }
+
+    private boolean isQuestionAnsweredCorrectly(List<Answer> answers){
+        for (Answer answer: answers) {
+            if(answer.isItCorrectAnswer()){
+                if(answer.isAnswerApproved() == false)
+                    return false;
+            }else {
+                if(answer.isAnswerApproved() == true)
+                    return false;
+            }
+        }
+        return true;
+    }
 }

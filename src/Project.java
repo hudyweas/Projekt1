@@ -1,5 +1,5 @@
 
-public class Projekt {
+public class Project {
 
 	public static void main(String[] args) {
 		Program program = new Program();
