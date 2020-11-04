@@ -8,7 +8,7 @@ wert2g;tak:0;oczywiście:1;nie:0;bardzo:1
 2rtrgw;tak:1;oczywiście:0;nie:1;bardzo:1
 wertwertwe;tak:0;oczywiście:1;nie:0;bardzo:1
 gwergwe;tak:1;oczywiście:1;nie:1;bardzo:0
-wergewtwert;tak:1;oczywiście:0;nie:0;bardzo:1
+wergewtwert;tak:1;oczywiście:0;nie:0;bardzo:0
 ertwretwer;tak:0;oczywiście:1;nie:1;bardzo:0
 wgergwe;tak:0;oczywiście:0;nie:0;bardzo:1
 ergwergw;tak:0;oczywiście:1;nie:0;bardzo:1
