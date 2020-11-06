@@ -6,6 +6,7 @@ public class Question {
     private String contentOfTheQuestion;
     private boolean hasBeenUsed;
     private List<Answer> answers = new ArrayList<Answer>();
+    private boolean isAnsweredCorrectly = false;
 
     public Question() {
 
@@ -43,5 +44,13 @@ public class Question {
 
     public boolean isHasBeenUsed() {
         return hasBeenUsed;
+    }
+
+    public void setAnsweredCorrectly(boolean answeredCorrectly) {
+        isAnsweredCorrectly = answeredCorrectly;
+    }
+
+    public boolean isAnsweredCorrectly() {
+        return isAnsweredCorrectly;
     }
 }

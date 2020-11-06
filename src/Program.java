@@ -9,12 +9,29 @@ public class Program {
 
         Scanner in = new Scanner(System.in);
         System.out.println("Podaj ilosc pytan:");
-        int numberOfQuestions = Integer.parseInt(in.nextLine());
-        int points = 0;
+        String numberOfQuestionsString;
+        int numberOfQuestions;
+
+        do{
+            do{
+                numberOfQuestionsString = in.nextLine();
+                if(!isInteger(numberOfQuestionsString))
+                    System.out.println("Wybierz liczbe calkowita!");
+            }while(!isInteger(numberOfQuestionsString));
+            numberOfQuestions = Integer.parseInt(numberOfQuestionsString);
+            if(isInteger(numberOfQuestionsString) && numberOfQuestions > dataBase.getAmountOfQuestions())
+                System.out.println("Wybrana ilosc pytan jest wieksza od ilosci pytan w bazie. Wybierz liczbe z przedzialu od 1 do "+dataBase.getAmountOfQuestions());
+        }while(numberOfQuestions > dataBase.getAmountOfQuestions() || numberOfQuestions < 1);
+
+        int points = 0;;
+
+        List<Question> questions = new ArrayList<Question>();
 
         for(int questionIndex = 1; questionIndex <= numberOfQuestions; questionIndex++){
             Question question = drawQuestion();
             List<Answer> answers = question.getAnswers();
+
+            questions.add((question));
 
             System.out.println("Pytanie "+questionIndex+":");
             displayQuestion(question);
@@ -22,35 +39,38 @@ public class Program {
             System.out.println("\nAby zatwierdzic odpowiedzi i przejsc do kolejnego pytania wcisnij 'x'\n\n");
 
             String userInput = in.nextLine();
-            userInput.toLowerCase();
 
             while(isOneOfStrings(userInput, "x", "a", "b", "c", "d") == false){
                 System.out.println("Wprowadzony znak jest bledny");
-                userInput = in.nextLine().toLowerCase();
+                userInput = in.nextLine();
             }
 
             while (userInput.equals("x") == false){
                 while(isOneOfStrings(userInput, "x", "a", "b", "c", "d") == false){
                     System.out.println("Wprowadzony znak jest bledny");
-                    userInput = in.nextLine().toLowerCase();
+                    userInput = in.nextLine();
                 }
                 if(userInput.equals("x")) break;
                 changeTheApprovalOfTheAnswer(answers, userInput);
 
-                userInput = in.nextLine().toLowerCase();
+                userInput = in.nextLine();
             }
-            if(isQuestionAnsweredCorrectly(answers)) points++;
+            if(isQuestionAnsweredCorrectly(answers))
+                question.setAnsweredCorrectly(true);
+
         }
-        System.out.println("Brawo! Zakonczyles test z iloscia "+points+" punktów!");
+
+        showScores(questions);
     }
 
     private void introduction() {
         System.out.println("Zasady i opis dzialania programu:\n"
                 + "1. Test jest wielokrotnego wyboru\n"
-                + "2. Test sklada się z ilosci pytan podanej przez uzytkownika\n"
+                + "2. Test sklada sie z ilosci pytan podanej przez uzytkownika\n"
                 + "3. Mozna wprowadzac tylko jedna odpowiedz na raz\n"
-                + "4. Kazde pytanie, na ktore prawidlowo odpowiesz, daje 1 punkt\n"
-                + "5. By przejsc do kolejnego pytania wcisnij 'x' \n\n"
+                + "4. Aby odpowiedziec na pytanie wpisz odpowiadajaca jej literke np. 'a'\n"
+                + "5. Kazde pytanie, na ktore prawidlowo odpowiesz, daje 1 punkt\n"
+                + "6. By przejsc do kolejnego pytania wcisnij 'x' \n\n"
                 + "By przejsc dalej - wcisnij dowolny klawisz");
     }
 
@@ -81,6 +101,7 @@ public class Program {
     }
 
     private boolean isOneOfStrings(String string, String... args){
+        string = string.toLowerCase();
         for(String arg: args){
             if(string.equals(arg)) return true;
         }
@@ -115,5 +136,26 @@ public class Program {
             }
         }
         return true;
+    }
+
+    private boolean isInteger(String number){
+        Scanner in = new Scanner(number.trim());
+        if(!in.hasNextInt()) return false;
+        in.nextInt();
+        return !in.hasNext();
+    }
+
+    private void showScores(List<Question> questions){
+        int points = 0;
+        int index = 0;
+
+        for(Question question : questions){
+            if(question.isAnsweredCorrectly()){
+                System.out.println("Pytanie "+(++index)+": - odpowiedziales POPRAWNIE");
+                points++;
+            }else
+                System.out.println("Pytanie "+(++index)+": - odpowiedziales BLEDNIE");
+        }
+        System.out.println("\nWynik:"+points+"/"+index);
     }
 }
