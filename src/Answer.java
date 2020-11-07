@@ -1,16 +1,16 @@
 public class Answer {
-    private String contentOfTheAnswer;
-    private boolean isItCorrectAnswer;
+    private final String content;
+    private final boolean isItCorrectAnswer;
     private boolean isAnswerApproved = false;
 
-    public Answer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
-        this.contentOfTheAnswer = contentOfTheAnswer;
+    public Answer(String content, boolean isItCorrectAnswer) {
+        this.content = content;
         this.isItCorrectAnswer = isItCorrectAnswer;
         
     }
 
-    public String getContentOfTheAnswer() {
-        return contentOfTheAnswer;
+    public String getContent() {
+        return content;
     }
 
     public boolean isItCorrectAnswer() {

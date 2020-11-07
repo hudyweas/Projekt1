@@ -2,30 +2,28 @@ import java.util.*;
 
 public class Program {
 
-    private DataBase dataBase = new DataBase("questions.txt");
+    private final DataBase dataBase = new DataBase("questions.txt");
 
     public void start(){
         introduction();
 
         Scanner in = new Scanner(System.in);
         System.out.println("Podaj ilosc pytan:");
-        String numberOfQuestionsString;
-        int numberOfQuestions;
+        int numberOfQuestions = 0;
 
         do{
-            do{
-                numberOfQuestionsString = in.nextLine();
-                if(!isInteger(numberOfQuestionsString))
-                    System.out.println("Wybierz liczbe calkowita!");
-            }while(!isInteger(numberOfQuestionsString));
-            numberOfQuestions = Integer.parseInt(numberOfQuestionsString);
-            if(isInteger(numberOfQuestionsString) && numberOfQuestions > dataBase.getAmountOfQuestions())
-                System.out.println("Wybrana ilosc pytan jest wieksza od ilosci pytan w bazie. Wybierz liczbe z przedzialu od 1 do "+dataBase.getAmountOfQuestions());
+            if(in.hasNextInt()) {
+                numberOfQuestions = in.nextInt();
+                if(numberOfQuestions>dataBase.getAmountOfQuestions()){
+                    System.out.println("Wybierz liczbe calkowita od 1 do "+dataBase.getAmountOfQuestions());
+                }
+            }else if(in.hasNextLine()){
+                in.nextLine();
+                System.out.println("Wybierz liczbe calkowita od 1 do "+dataBase.getAmountOfQuestions());
+            }
         }while(numberOfQuestions > dataBase.getAmountOfQuestions() || numberOfQuestions < 1);
 
-        int points = 0;;
-
-        List<Question> questions = new ArrayList<Question>();
+        List<Question> questions = new ArrayList<>();
 
         for(int questionIndex = 1; questionIndex <= numberOfQuestions; questionIndex++){
             Question question = drawQuestion();
@@ -38,15 +36,13 @@ public class Program {
             displayAnswers(answers);
             System.out.println("\nAby zatwierdzic odpowiedzi i przejsc do kolejnego pytania wcisnij 'x'\n\n");
 
+            if(in.hasNextLine())
+                in.nextLine();
+
             String userInput = in.nextLine();
 
-            while(isOneOfStrings(userInput, "x", "a", "b", "c", "d") == false){
-                System.out.println("Wprowadzony znak jest bledny");
-                userInput = in.nextLine();
-            }
-
-            while (userInput.equals("x") == false){
-                while(isOneOfStrings(userInput, "x", "a", "b", "c", "d") == false){
+            while (!userInput.equals("x")){
+                while(checkInput(userInput, question.getNumberOfAnswers())){
                     System.out.println("Wprowadzony znak jest bledny");
                     userInput = in.nextLine();
                 }
@@ -81,7 +77,7 @@ public class Program {
         do{
             int drawnNumber = random.nextInt(dataBase.getAmountOfQuestions());
             question = dataBase.getQuestion(drawnNumber);
-        }while(question.isHasBeenUsed() == true);
+        }while(question.isUsed());
 
         question.setHasBeenUsed(true);
 
@@ -89,14 +85,14 @@ public class Program {
     }
 
     private void displayQuestion(Question question){
-        System.out.println(question.getContentOfTheQuestion());
+        System.out.println(question.getContent());
     }
 
     private void displayAnswers(List<Answer> answers){
         for(int indexOfAnswer = 0; indexOfAnswer < answers.size(); indexOfAnswer++){
             Answer answer = answers.get(indexOfAnswer);
             final String[] ABCD = new String[]{"A", "B", "C", "D"};
-            System.out.println((ABCD[indexOfAnswer])+") "+answer.getContentOfTheAnswer());
+            System.out.println((ABCD[indexOfAnswer])+") "+answer.getContent());
         }
     }
 
@@ -109,40 +105,25 @@ public class Program {
     }
 
     private void changeTheApprovalOfTheAnswer(List<Answer> answers, String userAnswer){
-        switch (userAnswer){
-            case "a":
-                answers.get(0).changeTheApprove();
-                break;
-            case "b":
-                answers.get(1).changeTheApprove();
-                break;
-            case "c":
-                answers.get(2).changeTheApprove();
-                break;
-            case "d":
-                answers.get(3).changeTheApprove();
-                break;
+        switch (userAnswer) {
+            case "a" -> answers.get(0).changeTheApprove();
+            case "b" -> answers.get(1).changeTheApprove();
+            case "c" -> answers.get(2).changeTheApprove();
+            case "d" -> answers.get(3).changeTheApprove();
         }
     }
 
     private boolean isQuestionAnsweredCorrectly(List<Answer> answers){
         for (Answer answer: answers) {
             if(answer.isItCorrectAnswer()){
-                if(answer.isAnswerApproved() == false)
+                if(!answer.isAnswerApproved())
                     return false;
             }else {
-                if(answer.isAnswerApproved() == true)
+                if(answer.isAnswerApproved())
                     return false;
             }
         }
         return true;
-    }
-
-    private boolean isInteger(String number){
-        Scanner in = new Scanner(number.trim());
-        if(!in.hasNextInt()) return false;
-        in.nextInt();
-        return !in.hasNext();
     }
 
     private void showScores(List<Question> questions){
@@ -157,5 +138,14 @@ public class Program {
                 System.out.println("Pytanie "+(++index)+": - odpowiedziales BLEDNIE");
         }
         System.out.println("\nWynik:"+points+"/"+index);
+    }
+
+    private boolean checkInput(String userInput, int NoOfAnswers){
+        return !switch (NoOfAnswers) {
+            case 2 -> isOneOfStrings(userInput, "x", "a", "b");
+            case 3 -> isOneOfStrings(userInput, "x", "a", "b", "c");
+            case 4 -> isOneOfStrings(userInput, "x", "a", "b", "c", "d");
+            default -> false;
+        };
     }
 }

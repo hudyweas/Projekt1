@@ -4,7 +4,7 @@ import java.util.*;
 
 public class DataBase {
 
-    private List<Question> questionsDataBase = new ArrayList<Question>();
+    private final List<Question> questionsDataBase = new ArrayList<Question>();
 
     public DataBase(String fileName){
         File dataFile = new File(fileName);

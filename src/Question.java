@@ -3,26 +3,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class Question {
-    private String contentOfTheQuestion;
+    private String content;
     private boolean hasBeenUsed;
     private List<Answer> answers = new ArrayList<Answer>();
     private boolean isAnsweredCorrectly = false;
 
-    public Question() {
-
-    }
-
-    public Question(String contentOfTheQuestion) {
-        this.contentOfTheQuestion = contentOfTheQuestion;
-    }
-
-    public void setContentOfTheQuestion(String contentOfTheQuestion) {
-        this.contentOfTheQuestion = contentOfTheQuestion;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-        Collections.shuffle(answers);
+    public Question(String content) {
+        this.content = content;
     }
 
     public void setHasBeenUsed(boolean hasBeenUsed) {
@@ -38,11 +25,11 @@ public class Question {
         return answers;
     }
 
-    public String getContentOfTheQuestion() {
-        return contentOfTheQuestion;
+    public String getContent() {
+        return content;
     }
 
-    public boolean isHasBeenUsed() {
+    public boolean isUsed() {
         return hasBeenUsed;
     }
 
@@ -52,5 +39,9 @@ public class Question {
 
     public boolean isAnsweredCorrectly() {
         return isAnsweredCorrectly;
+    }
+
+    public int getNumberOfAnswers(){
+        return answers.size();
     }
 }
