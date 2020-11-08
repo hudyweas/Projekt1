@@ -18,7 +18,7 @@ public class Program {
                     System.out.println("Wybierz liczbe calkowita od 1 do "+dataBase.getAmountOfQuestions());
                 }
             }else if(in.hasNextLine()){
-                in.nextLine();
+                in.nextLine(); //czyszczenie scannera
                 System.out.println("Wybierz liczbe calkowita od 1 do "+dataBase.getAmountOfQuestions());
             }
         }while(numberOfQuestions > dataBase.getAmountOfQuestions() || numberOfQuestions < 1);
@@ -79,7 +79,7 @@ public class Program {
             question = dataBase.getQuestion(drawnNumber);
         }while(question.isUsed());
 
-        question.setHasBeenUsed(true);
+        question.setUsed(true);
 
         return question;
     }
@@ -104,22 +104,28 @@ public class Program {
         return false;
     }
 
-    private void changeTheApprovalOfTheAnswer(List<Answer> answers, String userAnswer){
-        switch (userAnswer) {
-            case "a" -> answers.get(0).changeTheApprove();
-            case "b" -> answers.get(1).changeTheApprove();
-            case "c" -> answers.get(2).changeTheApprove();
-            case "d" -> answers.get(3).changeTheApprove();
+    private boolean isOneOfStrings(String string, String string2, String[] table){
+        string = string.toLowerCase();
+        if(string.equals(string2))
+            return true;
+
+        for(String arg: table){
+            if(string.equals(arg)) return true;
         }
+        return false;
+    }
+
+    private void changeTheApprovalOfTheAnswer(List<Answer> answers, String userAnswer){
+        answers.get(convertLetterToNumber(userAnswer)).changeTheApprove();
     }
 
     private boolean isQuestionAnsweredCorrectly(List<Answer> answers){
         for (Answer answer: answers) {
-            if(answer.isItCorrectAnswer()){
-                if(!answer.isAnswerApproved())
+            if(answer.isCorrect()){
+                if(!answer.isApproved())
                     return false;
             }else {
-                if(answer.isAnswerApproved())
+                if(answer.isApproved())
                     return false;
             }
         }
@@ -140,12 +146,18 @@ public class Program {
         System.out.println("\nWynik:"+points+"/"+index);
     }
 
-    private boolean checkInput(String userInput, int NoOfAnswers){
-        return !switch (NoOfAnswers) {
-            case 2 -> isOneOfStrings(userInput, "x", "a", "b");
-            case 3 -> isOneOfStrings(userInput, "x", "a", "b", "c");
-            case 4 -> isOneOfStrings(userInput, "x", "a", "b", "c", "d");
-            default -> false;
-        };
+    private boolean checkInput(String userInput, int noOfAnswers){
+        String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+
+        return !isOneOfStrings(userInput, "x", Arrays.copyOfRange(letters, 0, noOfAnswers));
+    }
+
+    public int convertLetterToNumber(String letter){
+        String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+        for(int letterIndex = 0; letterIndex < letters.length; letterIndex++){
+            if(letters[letterIndex].equals(letter))
+                return letterIndex;
+        }
+        return 0;
     }
 }

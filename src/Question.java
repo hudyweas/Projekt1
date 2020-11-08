@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Question {
     private String content;
-    private boolean hasBeenUsed;
+    private boolean isUsed;
     private List<Answer> answers = new ArrayList<Answer>();
     private boolean isAnsweredCorrectly = false;
 
@@ -12,8 +12,8 @@ public class Question {
         this.content = content;
     }
 
-    public void setHasBeenUsed(boolean hasBeenUsed) {
-        this.hasBeenUsed = hasBeenUsed;
+    public void setUsed(boolean used) {
+        this.isUsed = used;
     }
 
     public void addAnswer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
@@ -30,7 +30,7 @@ public class Question {
     }
 
     public boolean isUsed() {
-        return hasBeenUsed;
+        return isUsed;
     }
 
     public void setAnsweredCorrectly(boolean answeredCorrectly) {

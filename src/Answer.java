@@ -1,11 +1,11 @@
 public class Answer {
     private final String content;
-    private final boolean isItCorrectAnswer;
-    private boolean isAnswerApproved = false;
+    private final boolean isCorrect;
+    private boolean isApproved = false;
 
-    public Answer(String content, boolean isItCorrectAnswer) {
+    public Answer(String content, boolean isCorrect) {
         this.content = content;
-        this.isItCorrectAnswer = isItCorrectAnswer;
+        this.isCorrect = isCorrect;
         
     }
 
@@ -13,17 +13,17 @@ public class Answer {
         return content;
     }
 
-    public boolean isItCorrectAnswer() {
-        return isItCorrectAnswer;
+    public boolean isCorrect() {
+        return isCorrect;
     }
 
     public void changeTheApprove(){
-        if(isAnswerApproved = false)
-            isAnswerApproved = true;
-        else isAnswerApproved = false;
+        if(isApproved = false)
+            isApproved = true;
+        else isApproved = false;
     }
 
-    public boolean isAnswerApproved(){
-        return isAnswerApproved;
+    public boolean isApproved(){
+        return isApproved;
     }
 }
