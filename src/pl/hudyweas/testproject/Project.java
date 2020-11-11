@@ -1,3 +1,6 @@
+package pl.hudyweas.testproject;
+
+import pl.hudyweas.testproject.Program;
 
 public class Project {
 

@@ -1,3 +1,7 @@
+package pl.hudyweas.testproject;
+
+import pl.hudyweas.testproject.Answer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

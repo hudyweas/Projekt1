@@ -1,3 +1,8 @@
+package pl.hudyweas.testproject;
+
+import pl.hudyweas.testproject.Answer;
+import pl.hudyweas.testproject.DataBase;
+
 import java.util.*;
 
 public class Program {
@@ -106,7 +111,7 @@ public class Program {
 
     private boolean isOneOfStrings(String string, String string2, String[] table){
         string = string.toLowerCase();
-        if(string.equals(string2))
+        if(Objects.equals(string, string2))
             return true;
 
         for(String arg: table){
@@ -153,7 +158,7 @@ public class Program {
     }
 
     public int convertLetterToNumber(String letter){
-        String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+        final String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
         for(int letterIndex = 0; letterIndex < letters.length; letterIndex++){
             if(letters[letterIndex].equals(letter))
                 return letterIndex;
