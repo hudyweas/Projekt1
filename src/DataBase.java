@@ -4,16 +4,16 @@ import java.util.*;
 
 public class DataBase {
 
-    private List<Question> questionsDataBase = new ArrayList<Question>();
+    private final List<Question> questionsDataBase = new ArrayList<>();
 
     public DataBase(String fileName){
         File dataFile = new File(fileName);
-        Scanner in = null;
+        Scanner in;
         try {
             in = new Scanner(dataFile);
 
             if(in.hasNextLine()){
-                String header = in.nextLine(); //pomijanie naglowka podczas importu
+                in.nextLine(); //pomijanie naglowka podczas importu
             }
 
             while(in.hasNextLine()) {
@@ -23,11 +23,8 @@ public class DataBase {
                 for (int i = 1; i < importedString.length; i++) { //petla dodajaca odpowiedzi do pytania
                     String[] answerString = importedString[i].split(":");
                     String answer = answerString[0];
-                    boolean isItCorrectAnswer;
 
-                    if (answerString[1].equals("1"))
-                        isItCorrectAnswer = true;
-                    else isItCorrectAnswer = false;
+                    boolean isItCorrectAnswer = answerString[1].equals("1");
 
                     question.addAnswer(answer, isItCorrectAnswer);
                 }

@@ -1,29 +1,28 @@
 public class Answer {
-    private String contentOfTheAnswer;
-    private boolean isItCorrectAnswer;
-    private boolean isAnswerApproved = false;
+    private final String content;
+    private final boolean isCorrect;
+    private boolean isApproved = false;
 
-    public Answer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
-        this.contentOfTheAnswer = contentOfTheAnswer;
-        this.isItCorrectAnswer = isItCorrectAnswer;
+    public Answer(String content, boolean isCorrect) {
+        this.content = content;
+        this.isCorrect = isCorrect;
         
     }
 
-    public String getContentOfTheAnswer() {
-        return contentOfTheAnswer;
+    public String getContent() {
+        return content;
     }
 
-    public boolean isItCorrectAnswer() {
-        return isItCorrectAnswer;
+    public boolean isCorrect() {
+        return isCorrect;
     }
 
     public void changeTheApprove(){
-        if(isAnswerApproved = false)
-            isAnswerApproved = true;
-        else isAnswerApproved = false;
+        if (isApproved = false) isApproved = true;
+        else isApproved = false;
     }
 
-    public boolean isAnswerApproved(){
-        return isAnswerApproved;
+    public boolean isApproved(){
+        return isApproved;
     }
 }
