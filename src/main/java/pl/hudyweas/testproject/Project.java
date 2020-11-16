@@ -6,5 +6,4 @@ public class Project {
         Program program = new Program();
         program.start();
     }
-
 }

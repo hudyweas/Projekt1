@@ -8,7 +8,6 @@ public class Answer {
     public Answer(String content, boolean isCorrect) {
         this.content = content;
         this.isCorrect = isCorrect;
-        
     }
 
     public String getContent() {
