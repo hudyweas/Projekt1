@@ -1,8 +1,9 @@
+package pl.hudyweas.testproject;
 import java.util.*;
 
 public class Program {
 
-    private final DataBase dataBase = new DataBase("questions.txt");
+    private final DataBase dataBase = new DataBase();
 
     public void start(){
         introduction();

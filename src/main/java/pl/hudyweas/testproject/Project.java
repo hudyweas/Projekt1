@@ -1,3 +1,8 @@
+package pl.hudyweas.testproject;
+
+import java.lang.reflect.InvocationTargetException;
+import java.sql.*;
+import java.util.Properties;
 
 public class Project {
 
@@ -5,5 +10,4 @@ public class Project {
 		Program program = new Program();
 		program.start();
 	}
-
 }
