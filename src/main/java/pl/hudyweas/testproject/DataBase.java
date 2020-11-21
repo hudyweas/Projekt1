@@ -16,8 +16,6 @@ public class DataBase {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-
-
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/questions", "root", "");
 
             stmt = conn.createStatement();
@@ -39,6 +37,7 @@ public class DataBase {
                 try {
                     rs.close();
                 } catch (SQLException sqlEx) {
+                    sqlEx.printStackTrace();
                 }
                 rs = null;
             }
@@ -47,6 +46,7 @@ public class DataBase {
                 try {
                     stmt.close();
                 } catch (SQLException sqlEx) {
+                    sqlEx.printStackTrace();
                 }
                 stmt = null;
             }
