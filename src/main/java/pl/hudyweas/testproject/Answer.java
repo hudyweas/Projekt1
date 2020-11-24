@@ -1,3 +1,5 @@
+package pl.hudyweas.testproject;
+
 public class Answer {
     private final String content;
     private final boolean isCorrect;

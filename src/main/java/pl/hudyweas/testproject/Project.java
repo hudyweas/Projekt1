@@ -1,3 +1,4 @@
+package pl.hudyweas.testproject;
 
 public class Project {
 
@@ -5,5 +6,4 @@ public class Project {
 		Program program = new Program();
 		program.start();
 	}
-
 }
