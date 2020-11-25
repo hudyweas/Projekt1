@@ -39,7 +39,7 @@ CREATE TABLE `answers` (
 -- Zrzut danych tabeli `answers`
 --
 
-INSERT INTO `answers` (`id`, `contenct`, `isCorrect`, `question_id`) VALUES
+INSERT INTO `answers` (`id`, `content`, `isCorrect`, `question_id`) VALUES
 (1, 'tak', 0, 1),
 (2, 'nie', 1, 1),
 (3, 'jest bardzo plaska', 0, 1),
