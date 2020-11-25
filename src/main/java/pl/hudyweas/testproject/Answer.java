@@ -3,12 +3,12 @@ package pl.hudyweas.testproject;
 public class Answer {
     private final String content;
     private final boolean isCorrect;
-    private boolean isApproved = false;
+    private boolean isApproved;
 
     public Answer(String content, boolean isCorrect) {
         this.content = content;
         this.isCorrect = isCorrect;
-        
+        isApproved = false;
     }
 
     public String getContent() {
@@ -20,8 +20,7 @@ public class Answer {
     }
 
     public void changeTheApprove(){
-        if (isApproved = false) isApproved = true;
-        else isApproved = false;
+        isApproved = !isApproved;
     }
 
     public boolean isApproved(){

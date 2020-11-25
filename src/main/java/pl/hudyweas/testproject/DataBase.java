@@ -29,7 +29,14 @@ public class DataBase {
                 questionsDataBase.add(question);
             }
 
-            System.out.println(rs);
+            if (stmt.execute("SELECT * FROM answers")) {
+                rs = stmt.getResultSet();
+            }
+
+            while(rs.next()){
+                questionsDataBase.get(rs.getInt("question_id")-1).addAnswer(rs.getString("content"), rs.getBoolean("isCorrect"));
+            }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
