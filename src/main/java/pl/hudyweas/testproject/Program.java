@@ -24,20 +24,20 @@ public class Program {
             }
         }while(numberOfQuestions > dataBase.getAmountOfQuestions() || numberOfQuestions < 1);
 
-        List<Question> userQuestions = new ArrayList<>();
+        dataBase.getQuestionsFromDB(numberOfQuestions);
+        List<Question> userQuestions = dataBase.getQuestionsDataBase();
 
-        for(int questionIndex = 1; questionIndex <= numberOfQuestions; questionIndex++){
-            Question question = drawQuestion();
+        int questionIndex = 1;
+        for(int i=0; i<userQuestions.size();i++){
+            Question question = userQuestions.get(i);
             List<Answer> answers = question.getAnswers();
 
-            userQuestions.add(question);
-
-            System.out.println("Pytanie "+questionIndex+":");
+            System.out.println("Pytanie "+(questionIndex++)+":");
             displayQuestion(question);
             displayAnswers(answers);
             System.out.println("\nAby zatwierdzic odpowiedzi i przejsc do kolejnego pytania wcisnij 'x'\n\n");
 
-            if(in.hasNextLine())
+            if(in.hasNextLine() && i==0)
                 in.nextLine();
 
             String userInput = in.nextLine();
@@ -52,6 +52,7 @@ public class Program {
 
                 userInput = in.nextLine();
             }
+
             if(isQuestionAnsweredCorrectly(answers))
                 question.setAnsweredCorrectly(true);
 
@@ -69,20 +70,6 @@ public class Program {
                 + "5. Kazde pytanie, na ktore prawidlowo odpowiesz, daje 1 punkt\n"
                 + "6. By przejsc do kolejnego pytania wcisnij 'x' \n\n"
                 + "By przejsc dalej - wcisnij dowolny klawisz");
-    }
-
-    private Question drawQuestion(){
-        Random random = new Random();
-        Question question;
-
-        do{
-            int drawnNumber = random.nextInt(dataBase.getAmountOfQuestions());
-            question = dataBase.getQuestion(drawnNumber);
-        }while(question.isUsed());
-
-        question.setUsed(true);
-
-        return question;
     }
 
     private void displayQuestion(Question question){

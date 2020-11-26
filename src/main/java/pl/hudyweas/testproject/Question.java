@@ -5,16 +5,11 @@ import java.util.List;
 
 public class Question {
     private final String content;
-    private boolean isUsed;
     private final List<Answer> answers = new ArrayList<>();
     private boolean isAnsweredCorrectly = false;
 
     public Question(String content) {
         this.content = content;
-    }
-
-    public void setUsed(boolean used) {
-        this.isUsed = used;
     }
 
     public void addAnswer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
@@ -28,10 +23,6 @@ public class Question {
 
     public String getContent() {
         return content;
-    }
-
-    public boolean isUsed() {
-        return isUsed;
     }
 
     public void setAnsweredCorrectly(boolean answeredCorrectly) {
