@@ -7,9 +7,18 @@ public class Question {
     private final String content;
     private final List<Answer> answers = new ArrayList<>();
     private boolean isAnsweredCorrectly = false;
+    private int id;
 
     public Question(String content) {
         this.content = content;
+    }
+    public Question(String content, int id) {
+        this.content = content;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void addAnswer(String contentOfTheAnswer, boolean isItCorrectAnswer) {

@@ -1,10 +1,21 @@
 package pl.hudyweas.testproject;
-import java.sql.*;
 import java.util.*;
 
 public class DataBase {
-    private final List<Question> questionsDataBase = new ArrayList<>();
-    private final int amountOfQuestions;
+    private ArrayList<Question> questionsDataBase = new ArrayList<>();
+    private int amountOfQuestions;
+    DBConnectionSystem questionsDB;
+
+    {
+        questionsDB = new DBConnectionSystem("jdbc:mysql://localhost:3306/questions", "root", "");
+    }
+
+    private boolean parseBoolean(String value){
+        if(value.equals("1"))
+            return true;
+        else
+            return false;
+    }
 
     public DataBase() {
         amountOfQuestions = getAmountOfQuestionsFromDB();
@@ -19,94 +30,38 @@ public class DataBase {
     }
 
     private int getAmountOfQuestionsFromDB() {
-        Statement stmt;
-        Connection conn;
-        ResultSet rs = null;
-        try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/questions", "root", "");
-            stmt = conn.createStatement();
+        ArrayList<ArrayList> rs = questionsDB.getResultSetAsTable("SELECT COUNT(`id`) AS `NoID` FROM questions", "NoID");
 
-            if (stmt.execute("SELECT COUNT(`id`) AS `NoID` FROM questions")) {
-                rs = stmt.getResultSet();
-            }
-            assert rs != null;
-            if (rs.next()) {
-                return rs.getInt("NoID");
-            }
-            conn.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return 0;
+        ArrayList<String> arraylist = rs.get(0);
+
+        int noID = Integer.parseInt(arraylist.get(0));
+        return noID;
     }
 
-    public void getQuestionsFromDB(int NoOfUserQuestions){
-        Random random = new Random();
-        ArrayList<Integer> questionsIndexes = new ArrayList<>();
-        for(int i=0; i<NoOfUserQuestions;i++){
-            int generatedIndex = random.nextInt(amountOfQuestions)+1;
-            if(!questionsIndexes.contains(generatedIndex))
-                questionsIndexes.add(generatedIndex);
-            else {
-                do{
-                    generatedIndex = random.nextInt(amountOfQuestions)+1;
-                }while(questionsIndexes.contains(generatedIndex));
-                questionsIndexes.add(generatedIndex);
+    public void getQuestionsFromDB(int noOfUserquestions){
+        ArrayList<ArrayList<String>> questionsRS =questionsDB.getResultSetAsTable("SELECT * FROM (SELECT * FROM questions ORDER BY RAND() LIMIT "+noOfUserquestions+") AS T1 ORDER BY id", "id", "content");
+
+        String questionsIdString = "question_id=0"; //"question_id=0" only to eliminate "OR" at the end of the string
+        ArrayList<Question> questions = new ArrayList<>();
+        for (ArrayList<String> arraylist:questionsRS) {
+            questionsIdString += " OR ";
+            questionsIdString += "question_id =" + arraylist.get(0);
+            questions.add(new Question(arraylist.get(1), Integer.parseInt(arraylist.get(0))));
+        }
+
+        ArrayList<ArrayList<String>> answersRS =questionsDB.getResultSetAsTable("SELECT * FROM answers WHERE "+questionsIdString+" ORDER BY question_id", "id", "content", "isCorrect", "question_id");
+
+        int questionIndex = 0;
+        for (ArrayList<String> arraylist:answersRS) {
+            if(Integer.parseInt(arraylist.get(3))==questions.get(questionIndex).getId()){
+                questions.get(questionIndex).addAnswer(arraylist.get(1), parseBoolean(arraylist.get(2)));
+            }else{
+                questionIndex++;
+                questions.get(questionIndex).addAnswer(arraylist.get(1), parseBoolean(arraylist.get(2)));
             }
         }
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Connection conn;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/questions", "root", "");
-            stmt = conn.createStatement();
-
-            for(Integer index: questionsIndexes){
-                if (stmt.execute("SELECT * FROM questions WHERE id="+ index)) {
-                    rs = stmt.getResultSet();
-                }
-
-                Question question = null;
-                while (rs.next()) {
-                    question = new Question(rs.getString("content"));
-                }
-
-                if (stmt.execute("SELECT * FROM answers WHERE question_id="+index)) {
-                    rs = stmt.getResultSet();
-                }
-
-                while (rs.next()) {
-                    assert question != null;
-                    question.addAnswer(rs.getString("content"), rs.getBoolean("isCorrect"));
-                }
-                questionsDataBase.add(question);
-            }
-            conn.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqlEx) {
-                    sqlEx.printStackTrace();
-                }
-            }
-
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqlEx) {
-                    sqlEx.printStackTrace();
-                }
-            }
-        }
+        Collections.shuffle(questions);
+        questionsDataBase = (ArrayList<Question>) questions.clone();
     }
 }
