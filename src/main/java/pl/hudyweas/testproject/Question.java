@@ -1,11 +1,12 @@
 package pl.hudyweas.testproject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Question {
     private final String CONTENT;
-    private final List<Answer> ANSWERS = new ArrayList<>();
+    private List<Answer> answers = new ArrayList<>();
     private boolean isAnsweredCorrectly = false;
     private int id;
 
@@ -19,12 +20,12 @@ public class Question {
     }
 
     public void addAnswer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
-        ANSWERS.add(new Answer(contentOfTheAnswer, isItCorrectAnswer));
-        Collections.shuffle(ANSWERS);
+        answers.add(new Answer(contentOfTheAnswer, isItCorrectAnswer));
+        Collections.shuffle(answers);
     }
 
     public List<Answer> getAnswers() {
-        return ANSWERS;
+        return answers;
     }
 
     public String getContent() {
@@ -39,7 +40,7 @@ public class Question {
         return isAnsweredCorrectly;
     }
 
-    public int getNumberOfAnswers(){
-        return ANSWERS.size();
+    public int getNumberOfAnswers() {
+        return answers.size();
     }
 }

@@ -18,11 +18,11 @@ public class Answer {
         return IS_CORRECT;
     }
 
-    public void changeTheApprove(){
+    public void changeTheApprove() {
         isApproved = !isApproved;
     }
 
-    public boolean isApproved(){
+    public boolean isApproved() {
         return isApproved;
     }
 }

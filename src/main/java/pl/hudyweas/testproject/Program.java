@@ -1,15 +1,17 @@
 package pl.hudyweas.testproject;
+
 import java.util.*;
 
 public class Program {
 
     private final DataBase DATABASE = new DataBase();
 
-    public void start(){
+    public void start() {
         printIntroduction();
         int userNoOfQuestions = inputIntFromRange(1, DATABASE.getAmountOfQuestions());
 
         DATABASE.getQuestionsFromDB(userNoOfQuestions);
+
         List<Question> testQuestions = DATABASE.getQuestionsDataBase();
 
         int questionIndex = 1;
@@ -18,12 +20,12 @@ public class Program {
 
             displayQuestionAndAnswers(currentQuestion, currentAnswers, questionIndex++);
 
-            do{
-                String userAnswer = inputAnswer(currentQuestion.getNumberOfAnswers());
-                if (userAnswer.equals("x")) break;
-
-                changeTheApprovalOfTheAnswer(currentAnswers, userAnswer);
-            }while(true);
+            String userAnswer;
+            do {
+                userAnswer = inputAnswer(currentQuestion.getNumberOfAnswers());
+                if (!userAnswer.equals("x"))
+                    changeTheApprovalOfTheAnswer(currentAnswers, userAnswer);
+            } while (!userAnswer.equals("x"));
 
             if (isQuestionAnsweredCorrectly(currentAnswers))
                 currentQuestion.setAnsweredCorrectly(true);
@@ -31,25 +33,25 @@ public class Program {
         printScores(testQuestions);
     }
 
-    private void displayQuestionAndAnswers(Question question, List<Answer> answers, int questionIndex){
-        System.out.println("Pytanie "+questionIndex+":");
+    private void displayQuestionAndAnswers(Question question, List<Answer> answers, int questionIndex) {
+        System.out.println("Pytanie " + questionIndex + ":");
         displayQuestion(question);
         displayAnswers(answers);
         System.out.println("\nAby zatwierdzic odpowiedzi i przejsc do kolejnego pytania wcisnij 'x'\n\n");
     }
 
-    private int inputIntFromRange(int start, int end){
+    public static int inputIntFromRange(int start, int end) {
         System.out.printf("Podaj liczbę z zakresu %s do %s:", start, end);
         Scanner in = new Scanner(System.in);
         int outputInt;
-        if(in.hasNextInt())
+        if (in.hasNextInt())
             outputInt = in.nextInt();
-        else{
+        else {
             System.out.println("Błąd wprowadzania danych");
             outputInt = inputIntFromRange(start, end);
         }
 
-        if(!isFromRange(outputInt,start, end)){
+        if (!isFromRange(outputInt, start, end)) {
             System.out.println("Błąd wprowadzania danych");
             outputInt = inputIntFromRange(start, end);
         }
@@ -57,13 +59,13 @@ public class Program {
         return outputInt;
     }
 
-    private String inputAnswer(int noOfQuestions){
+    private String inputAnswer(int noOfQuestions) {
         System.out.println("Podaj odpowiedź lub X, aby zakończyć:");
         Scanner in = new Scanner(System.in);
         String output = "";
-        if(in.hasNextLine()){
+        if (in.hasNextLine()) {
             output = in.nextLine().toLowerCase();
-            if(checkInput(output, noOfQuestions))
+            if (checkInput(output, noOfQuestions))
                 return output;
             else {
                 System.out.println("Błąd wprowadzania danych");
@@ -73,13 +75,10 @@ public class Program {
         return output;
     }
 
-    private boolean isFromRange(int value, int start, int end){
-        if(value > end)
+    private static boolean isFromRange(int value, int start, int end) {
+        if (value > end)
             return false;
-        else if (value < start)
-            return false;
-
-        return true;
+        else return value >= start;
     }
 
     private void printIntroduction() {
@@ -93,64 +92,64 @@ public class Program {
                 + "By przejsc dalej - wcisnij dowolny klawisz");
     }
 
-    private void displayQuestion(Question question){
+    private void displayQuestion(Question question) {
         System.out.println(question.getContent());
     }
 
-    private void displayAnswers(List<Answer> answers){
-        for(int indexOfAnswer = 0; indexOfAnswer < answers.size(); indexOfAnswer++){
+    private void displayAnswers(List<Answer> answers) {
+        for (int indexOfAnswer = 0; indexOfAnswer < answers.size(); indexOfAnswer++) {
             Answer answer = answers.get(indexOfAnswer);
             final String[] ABCD = new String[]{"A", "B", "C", "D"};
-            System.out.println((ABCD[indexOfAnswer])+") "+answer.getContent());
+            System.out.println((ABCD[indexOfAnswer]) + ") " + answer.getContent());
         }
     }
 
-    private boolean isOneOfStrings(String string, String[] table){
+    private boolean isOneOfStrings(String string, String[] table) {
         string = string.toLowerCase();
-        if(string.equals("x"))
+        if (string.equals("x"))
             return true;
 
-        for(String arg: table){
-            if(string.equals(arg)) return true;
+        for (String arg : table) {
+            if (string.equals(arg)) return true;
         }
         return false;
     }
 
-    private void changeTheApprovalOfTheAnswer(List<Answer> answers, String userAnswer){
+    private void changeTheApprovalOfTheAnswer(List<Answer> answers, String userAnswer) {
         answers.get(convertLetterToNumber(userAnswer)).changeTheApprove();
     }
 
-    private boolean isQuestionAnsweredCorrectly(List<Answer> answers){
-        for (Answer answer: answers)
-            if(answer.isCorrect()){
-                if(!answer.isApproved())
+    private boolean isQuestionAnsweredCorrectly(List<Answer> answers) {
+        for (Answer answer : answers)
+            if (answer.isCorrect()) {
+                if (!answer.isApproved())
                     return false;
-            }else if(answer.isApproved())
+            } else if (answer.isApproved())
                 return false;
         return true;
     }
 
-    private void printScores(List<Question> questions){
+    private void printScores(List<Question> questions) {
         int points = 0;
         int index = 0;
 
-        for(Question question : questions){
-            if(question.isAnsweredCorrectly()){
-                System.out.println("Pytanie "+(++index)+": - odpowiedziales POPRAWNIE");
+        for (Question question : questions) {
+            if (question.isAnsweredCorrectly()) {
+                System.out.println("Pytanie " + (++index) + ": - odpowiedziales POPRAWNIE");
                 points++;
-            }else
-                System.out.println("Pytanie "+(++index)+": - odpowiedziales BLEDNIE");
+            } else
+                System.out.println("Pytanie " + (++index) + ": - odpowiedziales BLEDNIE");
         }
-        System.out.println("\nWynik:"+points+"/"+index);
+        System.out.println("\nWynik:" + points + "/" + index);
     }
 
-    private boolean checkInput(String userInput, int noOfAnswers){
+    private boolean checkInput(String userInput, int noOfAnswers) {
         final String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
 
         return isOneOfStrings(userInput, Arrays.copyOfRange(letters, 0, noOfAnswers));
     }
 
-    public int convertLetterToNumber(String letter){
+    public int convertLetterToNumber(String letter) {
         final ArrayList letters = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
         return letters.indexOf(letter);
     }
