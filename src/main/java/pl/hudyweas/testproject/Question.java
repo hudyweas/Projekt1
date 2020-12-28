@@ -4,16 +4,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class Question {
-    private final String content;
-    private final List<Answer> answers = new ArrayList<>();
+    private final String CONTENT;
+    private final List<Answer> ANSWERS = new ArrayList<>();
     private boolean isAnsweredCorrectly = false;
     private int id;
 
-    public Question(String content) {
-        this.content = content;
-    }
     public Question(String content, int id) {
-        this.content = content;
+        this.CONTENT = content;
         this.id = id;
     }
 
@@ -22,16 +19,16 @@ public class Question {
     }
 
     public void addAnswer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
-        answers.add(new Answer(contentOfTheAnswer, isItCorrectAnswer));
-        Collections.shuffle(answers);
+        ANSWERS.add(new Answer(contentOfTheAnswer, isItCorrectAnswer));
+        Collections.shuffle(ANSWERS);
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return ANSWERS;
     }
 
     public String getContent() {
-        return content;
+        return CONTENT;
     }
 
     public void setAnsweredCorrectly(boolean answeredCorrectly) {
@@ -43,6 +40,6 @@ public class Question {
     }
 
     public int getNumberOfAnswers(){
-        return answers.size();
+        return ANSWERS.size();
     }
 }

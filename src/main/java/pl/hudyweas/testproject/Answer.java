@@ -1,21 +1,21 @@
 package pl.hudyweas.testproject;
 
 public class Answer {
-    private final String content;
-    private final boolean isCorrect;
+    private final String CONTENT;
+    private final boolean IS_CORRECT;
     private boolean isApproved = false;
 
     public Answer(String content, boolean isCorrect) {
-        this.content = content;
-        this.isCorrect = isCorrect;
+        this.CONTENT = content;
+        this.IS_CORRECT = isCorrect;
     }
 
     public String getContent() {
-        return content;
+        return CONTENT;
     }
 
     public boolean isCorrect() {
-        return isCorrect;
+        return IS_CORRECT;
     }
 
     public void changeTheApprove(){

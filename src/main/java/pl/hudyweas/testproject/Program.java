@@ -3,65 +3,86 @@ import java.util.*;
 
 public class Program {
 
-    private final DataBase dataBase = new DataBase();
+    private final DataBase DATABASE = new DataBase();
 
     public void start(){
-        introduction();
+        printIntroduction();
+        int userNoOfQuestions = inputIntFromRange(1, DATABASE.getAmountOfQuestions());
 
-        Scanner in = new Scanner(System.in);
-        System.out.println("Podaj ilosc pytan:");
-        int numberOfQuestions = 0;
-
-        do{
-            if(in.hasNextInt()) {
-                numberOfQuestions = in.nextInt();
-                if(numberOfQuestions>dataBase.getAmountOfQuestions()){
-                    System.out.println("Wybierz liczbe calkowita od 1 do "+dataBase.getAmountOfQuestions());
-                }
-            }else if(in.hasNextLine()){
-                in.nextLine(); //czyszczenie scannera
-                System.out.println("Wybierz liczbe calkowita od 1 do "+dataBase.getAmountOfQuestions());
-            }
-        }while(numberOfQuestions > dataBase.getAmountOfQuestions() || numberOfQuestions < 1);
-
-        dataBase.getQuestionsFromDB(numberOfQuestions);
-        List<Question> userQuestions = dataBase.getQuestionsDataBase();
+        DATABASE.getQuestionsFromDB(userNoOfQuestions);
+        List<Question> testQuestions = DATABASE.getQuestionsDataBase();
 
         int questionIndex = 1;
-        for(int i=0; i<userQuestions.size();i++){
-            Question question = userQuestions.get(i);
-            List<Answer> answers = question.getAnswers();
+        for (Question currentQuestion : testQuestions) {
+            List<Answer> currentAnswers = currentQuestion.getAnswers();
 
-            System.out.println("Pytanie "+(questionIndex++)+":");
-            displayQuestion(question);
-            displayAnswers(answers);
-            System.out.println("\nAby zatwierdzic odpowiedzi i przejsc do kolejnego pytania wcisnij 'x'\n\n");
+            displayQuestionAndAnswers(currentQuestion, currentAnswers, questionIndex++);
 
-            if(in.hasNextLine() && i==0)
-                in.nextLine();
+            do{
+                String userAnswer = inputAnswer(currentQuestion.getNumberOfAnswers());
+                if (userAnswer.equals("x")) break;
 
-            String userInput = in.nextLine();
+                changeTheApprovalOfTheAnswer(currentAnswers, userAnswer);
+            }while(true);
 
-            while (!userInput.equals("x")){
-                while(checkInput(userInput, question.getNumberOfAnswers())){
-                    System.out.println("Wprowadzony znak jest bledny");
-                    userInput = in.nextLine();
-                }
-                if(userInput.equals("x")) break;
-                changeTheApprovalOfTheAnswer(answers, userInput);
-
-                userInput = in.nextLine();
-            }
-
-            if(isQuestionAnsweredCorrectly(answers))
-                question.setAnsweredCorrectly(true);
-
+            if (isQuestionAnsweredCorrectly(currentAnswers))
+                currentQuestion.setAnsweredCorrectly(true);
         }
-
-        showScores(userQuestions);
+        printScores(testQuestions);
     }
 
-    private void introduction() {
+    private void displayQuestionAndAnswers(Question question, List<Answer> answers, int questionIndex){
+        System.out.println("Pytanie "+questionIndex+":");
+        displayQuestion(question);
+        displayAnswers(answers);
+        System.out.println("\nAby zatwierdzic odpowiedzi i przejsc do kolejnego pytania wcisnij 'x'\n\n");
+    }
+
+    private int inputIntFromRange(int start, int end){
+        System.out.printf("Podaj liczbę z zakresu %s do %s:", start, end);
+        Scanner in = new Scanner(System.in);
+        int outputInt;
+        if(in.hasNextInt())
+            outputInt = in.nextInt();
+        else{
+            System.out.println("Błąd wprowadzania danych");
+            outputInt = inputIntFromRange(start, end);
+        }
+
+        if(!isFromRange(outputInt,start, end)){
+            System.out.println("Błąd wprowadzania danych");
+            outputInt = inputIntFromRange(start, end);
+        }
+
+        return outputInt;
+    }
+
+    private String inputAnswer(int noOfQuestions){
+        System.out.println("Podaj odpowiedź lub X, aby zakończyć:");
+        Scanner in = new Scanner(System.in);
+        String output = "";
+        if(in.hasNextLine()){
+            output = in.nextLine().toLowerCase();
+            if(checkInput(output, noOfQuestions))
+                return output;
+            else {
+                System.out.println("Błąd wprowadzania danych");
+                output = inputAnswer(noOfQuestions);
+            }
+        }
+        return output;
+    }
+
+    private boolean isFromRange(int value, int start, int end){
+        if(value > end)
+            return false;
+        else if (value < start)
+            return false;
+
+        return true;
+    }
+
+    private void printIntroduction() {
         System.out.println("Zasady i opis dzialania programu:\n"
                 + "1. Test jest wielokrotnego wyboru\n"
                 + "2. Test sklada sie z ilosci pytan podanej przez uzytkownika\n"
@@ -100,19 +121,16 @@ public class Program {
     }
 
     private boolean isQuestionAnsweredCorrectly(List<Answer> answers){
-        for (Answer answer: answers) {
+        for (Answer answer: answers)
             if(answer.isCorrect()){
                 if(!answer.isApproved())
                     return false;
-            }else {
-                if(answer.isApproved())
-                    return false;
-            }
-        }
+            }else if(answer.isApproved())
+                return false;
         return true;
     }
 
-    private void showScores(List<Question> questions){
+    private void printScores(List<Question> questions){
         int points = 0;
         int index = 0;
 
@@ -129,7 +147,7 @@ public class Program {
     private boolean checkInput(String userInput, int noOfAnswers){
         final String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
 
-        return !isOneOfStrings(userInput, Arrays.copyOfRange(letters, 0, noOfAnswers));
+        return isOneOfStrings(userInput, Arrays.copyOfRange(letters, 0, noOfAnswers));
     }
 
     public int convertLetterToNumber(String letter){

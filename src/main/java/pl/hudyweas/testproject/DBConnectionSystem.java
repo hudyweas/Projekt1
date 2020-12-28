@@ -21,9 +21,9 @@ public class DBConnectionSystem {
         }
     }
 
-    public ArrayList getResultSetAsTable(String query, String... rsKeyWords) {
+    public ArrayList getResultSetAsTable(String query, String... resultSetKeyWords) {
         ArrayList <Object> output = new ArrayList<>();
-        Statement stmt = null;
+        Statement stmt;
         try {
             stmt = conn.createStatement();
             ResultSet rs = null;
@@ -34,8 +34,8 @@ public class DBConnectionSystem {
 
             while(rs.next()) {
                 ArrayList <String> row = new ArrayList<>();
-                for(int i=0; i<rsKeyWords.length; i++){
-                    row.add(rs.getString(rsKeyWords[i]));
+                for(int i=0; i<resultSetKeyWords.length; i++){
+                    row.add(rs.getString(resultSetKeyWords[i]));
                 }
                 output.add(row);
             }
