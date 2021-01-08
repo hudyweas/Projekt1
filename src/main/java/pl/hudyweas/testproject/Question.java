@@ -8,20 +8,20 @@ public class Question {
     private final String CONTENT;
     private List<Answer> answers = new ArrayList<>();
     private boolean isAnsweredCorrectly = false;
-    private int id;
+    private final int ID;
 
-    public Question(String content, int id) {
+    public Question(int id, String content) {
         this.CONTENT = content;
-        this.id = id;
+        this.ID = id;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 
-    public void addAnswer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
-        answers.add(new Answer(contentOfTheAnswer, isItCorrectAnswer));
-        Collections.shuffle(answers);
+    public void addAnswersArrayList(ArrayList<Answer> answers) {
+        this.answers = answers;
+        Collections.shuffle(this.answers);
     }
 
     public List<Answer> getAnswers() {

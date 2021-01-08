@@ -1,6 +1,9 @@
 package pl.hudyweas.testproject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class Program {
 
@@ -10,7 +13,7 @@ public class Program {
         printIntroduction();
         int userNoOfQuestions = inputIntFromRange(1, DATABASE.getAmountOfQuestions());
 
-        DATABASE.getQuestionsFromDB(userNoOfQuestions);
+        DATABASE.getQuestionsAndAnswersFromDatabase(userNoOfQuestions);
 
         List<Question> testQuestions = DATABASE.getQuestionsDataBase();
 
@@ -150,7 +153,7 @@ public class Program {
     }
 
     public int convertLetterToNumber(String letter) {
-        final ArrayList letters = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
+        final ArrayList<String> letters = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
         return letters.indexOf(letter);
     }
 }
