@@ -12,8 +12,8 @@ public class DataBase {
     }
 
     public DataBase() {
-        amountOfQuestions = getAmountOfQuestionsFromDB();
         questionsDB = new DBConnectionSystem();
+        amountOfQuestions = getAmountOfQuestionsFromDB();
     }
 
     public List<Question> getQuestionsDataBase() {
