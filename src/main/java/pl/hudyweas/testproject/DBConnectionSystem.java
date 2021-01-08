@@ -22,7 +22,7 @@ public class DBConnectionSystem {
         }
     }
 
-    public ArrayList getResultSetAsTable(String query, String... resultSetKeyWords) {
+    public ArrayList getResultAsArrayList(String query, String... resultSetKeyWords) {
         ArrayList<Object> output = new ArrayList<>();
         Statement stmt;
         try {

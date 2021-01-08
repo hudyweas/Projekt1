@@ -7,16 +7,13 @@ public class DataBase {
     private int amountOfQuestions;
     DBConnectionSystem questionsDB;
 
-    {
-        questionsDB = new DBConnectionSystem();
-    }
-
     private boolean parseBoolean(String value) {
         return value.equals("1");
     }
 
     public DataBase() {
         amountOfQuestions = getAmountOfQuestionsFromDB();
+        questionsDB = new DBConnectionSystem();
     }
 
     public List<Question> getQuestionsDataBase() {
@@ -28,7 +25,7 @@ public class DataBase {
     }
 
     private int getAmountOfQuestionsFromDB() {
-        ArrayList<ArrayList> rs = questionsDB.getResultSetAsTable("SELECT COUNT(`id`) AS `NoID` FROM questions", "NoID");
+        ArrayList<ArrayList> rs = questionsDB.getResultAsArrayList("SELECT COUNT(`id`) AS `NoID` FROM questions", "NoID");
 
         ArrayList<String> arraylist = rs.get(0);
 
@@ -36,7 +33,7 @@ public class DataBase {
     }
 
     public void getQuestionsFromDB(int noOfUserquestions) {
-        ArrayList<ArrayList<String>> questionsRS = questionsDB.getResultSetAsTable("SELECT * FROM (SELECT * FROM questions ORDER BY RAND() LIMIT " + noOfUserquestions + ") AS T1 ORDER BY id", "id", "content");
+        ArrayList<ArrayList<String>> questionsRS = questionsDB.getResultAsArrayList("SELECT * FROM (SELECT * FROM questions ORDER BY RAND() LIMIT " + noOfUserquestions + ") AS T1 ORDER BY id", "id", "content");
 
         StringBuilder answerMySqlWhereClause = new StringBuilder("question_id=0"); //"question_id=0" only to eliminate "OR" at the end of the string
         ArrayList<Question> questions = new ArrayList<>();
@@ -45,7 +42,7 @@ public class DataBase {
             questions.add(new Question(questionResultSetRow.get(1), Integer.parseInt(questionResultSetRow.get(0))));
         }
 
-        ArrayList<ArrayList<String>> answersRS = questionsDB.getResultSetAsTable("SELECT * FROM answers WHERE " + answerMySqlWhereClause + " ORDER BY question_id", "id", "content", "isCorrect", "question_id");
+        ArrayList<ArrayList<String>> answersRS = questionsDB.getResultAsArrayList("SELECT * FROM answers WHERE " + answerMySqlWhereClause + " ORDER BY question_id", "id", "content", "isCorrect", "question_id");
 
         int questionIndex = 0;
         for (ArrayList<String> arraylist : answersRS) {
