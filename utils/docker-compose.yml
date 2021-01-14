@@ -1,0 +1,45 @@
+version: '3.8'
+
+networks:
+  db_network:
+    driver: bridge
+
+services:
+  db:
+    image: mysql:latest
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: questions
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_USER: sa
+      MYSQL_PASSWORD: sa
+    ports:
+      - 3306:3306
+    networks:
+      - db_network
+    container_name: db
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+    networks:
+      - db_network
+    container_name: pro1_pma
+
+volumes:
+  db_data:

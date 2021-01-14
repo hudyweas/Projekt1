@@ -1,64 +1,83 @@
 package pl.hudyweas.testproject;
-import java.sql.*;
-import java.util.*;
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBase {
-    private final List<Question> questionsDataBase = new ArrayList<>();
+    private ArrayList<Question> questionsDataBase = new ArrayList<>();
+    private int amountOfQuestions;
+    DBConnectionSystem questionsDB;
 
     public DataBase() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/questions", "root", "");
-
-            stmt = conn.createStatement();
-
-            if (stmt.execute("SELECT * FROM questions")) {
-                rs = stmt.getResultSet();
-            }
-
-            while(rs.next()){
-                Question question = new Question(rs.getString("content"));
-                questionsDataBase.add(question);
-            }
-
-            System.out.println(rs);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqlEx) {
-                    sqlEx.printStackTrace();
-                }
-                rs = null;
-            }
-
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqlEx) {
-                    sqlEx.printStackTrace();
-                }
-                stmt = null;
-            }
-        }
+        questionsDB = new DBConnectionSystem();
+        amountOfQuestions = getAmountOfQuestionsFromDB();
     }
 
-        public Question getQuestion ( int indexOfTheQuestion){
-            return questionsDataBase.get(indexOfTheQuestion);
-        }
-
-        public int getAmountOfQuestions () {
-            return questionsDataBase.size();
-        }
-
+    public List<Question> getQuestionsDataBase() {
+        return questionsDataBase;
     }
+
+    public int getAmountOfQuestions() {
+        return amountOfQuestions;
+    }
+
+    private int getAmountOfQuestionsFromDB() {
+        ArrayList<String> rs = questionsDB.getResultAsArrayList("SELECT COUNT(`id`) AS `NoID` FROM questions", "NoID");
+        return Integer.parseInt(rs.get(0));
+    }
+
+    public void getQuestionsAndAnswersFromDatabase(int noOfUserQuestions) {
+        ArrayList<Question> questions = getQuestions(noOfUserQuestions);
+        for (Question question : questions) {
+            String questionId = String.valueOf(question.getID());
+            question.addAnswersArrayList(getAnswers(questionId));
+        }
+
+        questionsDataBase = questions;
+    }
+
+    private ArrayList<Question> getQuestions(int noOfUserQuestions) {
+        ResultSet questionRS = questionsDB.getResultSet("SELECT * FROM questions ORDER BY RAND() LIMIT " + noOfUserQuestions);
+        return getQuestionsFromResultSet(questionRS);
+    }
+
+    public ArrayList<Question> getQuestionsFromResultSet(ResultSet rs) {
+        ArrayList<Question> questions = new ArrayList<>();
+        try {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String content = rs.getString("content");
+                questions.add(new Question(id, content));
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        return questions;
+    }
+
+    private ArrayList<Answer> getAnswers(String questionID) {
+        ResultSet answersRS = questionsDB.getResultSet("SELECT * FROM answers WHERE question_id = " + questionID);
+        return getAnswersFromResultSet(answersRS);
+    }
+
+    public ArrayList<Answer> getAnswersFromResultSet(ResultSet rs) {
+        ArrayList<Answer> answers = new ArrayList<>();
+        try {
+            while (rs.next()) {
+                String content = rs.getString("content");
+                boolean isCorrect = parseBoolean(rs.getString("isCorrect"));
+                answers.add(new Answer(content, isCorrect));
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        return answers;
+    }
+
+    private boolean parseBoolean(String value) {
+        return value.equals("1");
+    }
+}

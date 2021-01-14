@@ -1,25 +1,27 @@
 package pl.hudyweas.testproject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Question {
-    private final String content;
-    private boolean isUsed;
-    private final List<Answer> answers = new ArrayList<>();
+    private final String CONTENT;
+    private List<Answer> answers = new ArrayList<>();
     private boolean isAnsweredCorrectly = false;
+    private final int ID;
 
-    public Question(String content) {
-        this.content = content;
+    public Question(int id, String content) {
+        this.CONTENT = content;
+        this.ID = id;
     }
 
-    public void setUsed(boolean used) {
-        this.isUsed = used;
+    public int getID() {
+        return ID;
     }
 
-    public void addAnswer(String contentOfTheAnswer, boolean isItCorrectAnswer) {
-        answers.add(new Answer(contentOfTheAnswer, isItCorrectAnswer));
-        Collections.shuffle(answers);
+    public void addAnswersArrayList(ArrayList<Answer> answers) {
+        this.answers = answers;
+        Collections.shuffle(this.answers);
     }
 
     public List<Answer> getAnswers() {
@@ -27,11 +29,7 @@ public class Question {
     }
 
     public String getContent() {
-        return content;
-    }
-
-    public boolean isUsed() {
-        return isUsed;
+        return CONTENT;
     }
 
     public void setAnsweredCorrectly(boolean answeredCorrectly) {
@@ -42,7 +40,7 @@ public class Question {
         return isAnsweredCorrectly;
     }
 
-    public int getNumberOfAnswers(){
+    public int getNumberOfAnswers() {
         return answers.size();
     }
 }
