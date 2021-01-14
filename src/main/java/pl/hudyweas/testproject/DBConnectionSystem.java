@@ -1,7 +1,7 @@
 package pl.hudyweas.testproject;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
 
 public class DBConnectionSystem {
     private Connection conn = null;
@@ -22,8 +22,23 @@ public class DBConnectionSystem {
         }
     }
 
-    public ArrayList getResultAsArrayList(String query, String... resultSetKeyWords) {
-        ArrayList<Object> output = new ArrayList<>();
+    public ResultSet getResultSet(String query) {
+        Statement stmt;
+        ResultSet rs = null;
+        try {
+            stmt = conn.createStatement();
+
+            if (stmt.execute(query)) {
+                rs = stmt.getResultSet();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return rs;
+    }
+
+    public ArrayList<String> getResultAsArrayList(String query, String... resultSetKeyWords) {
+        ArrayList<String> row = new ArrayList<>();
         Statement stmt;
         try {
             stmt = conn.createStatement();
@@ -34,15 +49,30 @@ public class DBConnectionSystem {
             }
 
             while (rs.next()) {
-                ArrayList<String> row = new ArrayList<>();
-                for (int i = 0; i < resultSetKeyWords.length; i++) {
-                    row.add(rs.getString(resultSetKeyWords[i]));
-                }
-                output.add(row);
+                row.add(resultSetRowToString(rs, resultSetKeyWords));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return output;
+        return row;
+    }
+
+    private String resultSetRowToString(ResultSet rs, String... resultSetKeyWords) throws SQLException {
+        StringBuilder output = null;
+        int rsKeyWordsLength = resultSetKeyWords.length;
+
+        if (rsKeyWordsLength == 1)
+            output = new StringBuilder(rs.getString(resultSetKeyWords[0]));
+        else {
+            for (String keyWord : resultSetKeyWords) {
+                output.append(rs.getString(keyWord)).append(";");
+            }
+            output = new StringBuilder(deleteLastCharFromString(output.toString()));
+        }
+        return output.toString();
+    }
+
+    private String deleteLastCharFromString(String string) {
+        return string.substring(0, string.length() - 2);
     }
 }

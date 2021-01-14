@@ -1,15 +1,13 @@
 package pl.hudyweas.testproject;
 
-import java.util.*;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBase {
     private ArrayList<Question> questionsDataBase = new ArrayList<>();
     private int amountOfQuestions;
     DBConnectionSystem questionsDB;
-
-    private boolean parseBoolean(String value) {
-        return value.equals("1");
-    }
 
     public DataBase() {
         questionsDB = new DBConnectionSystem();
@@ -25,40 +23,61 @@ public class DataBase {
     }
 
     private int getAmountOfQuestionsFromDB() {
-        ArrayList<ArrayList> rs = questionsDB.getResultAsArrayList("SELECT COUNT(`id`) AS `NoID` FROM questions", "NoID");
-
-        ArrayList<String> arraylist = rs.get(0);
-
-        return Integer.parseInt(arraylist.get(0));
+        ArrayList<String> rs = questionsDB.getResultAsArrayList("SELECT COUNT(`id`) AS `NoID` FROM questions", "NoID");
+        return Integer.parseInt(rs.get(0));
     }
 
-    public void getQuestionsFromDB(int noOfUserquestions) {
-        ArrayList<ArrayList<String>> questionsRS = questionsDB.getResultAsArrayList("SELECT * FROM (SELECT * FROM questions ORDER BY RAND() LIMIT " + noOfUserquestions + ") AS T1 ORDER BY id", "id", "content");
+    public void getQuestionsAndAnswersFromDatabase(int noOfUserQuestions) {
+        ArrayList<Question> questions = getQuestions(noOfUserQuestions);
+        for (Question question : questions) {
+            String questionId = String.valueOf(question.getID());
+            question.addAnswersArrayList(getAnswers(questionId));
+        }
 
-        StringBuilder answerMySqlWhereClause = new StringBuilder("question_id=0"); //"question_id=0" only to eliminate "OR" at the end of the string
+        questionsDataBase = questions;
+    }
+
+    private ArrayList<Question> getQuestions(int noOfUserQuestions) {
+        ResultSet questionRS = questionsDB.getResultSet("SELECT * FROM questions ORDER BY RAND() LIMIT " + noOfUserQuestions);
+        return getQuestionsFromResultSet(questionRS);
+    }
+
+    public ArrayList<Question> getQuestionsFromResultSet(ResultSet rs) {
         ArrayList<Question> questions = new ArrayList<>();
-        for (ArrayList<String> questionResultSetRow : questionsRS) {
-            answerMySqlWhereClause.append(getAnswersMySqlWhereClause(questionResultSetRow.get(0)));
-            questions.add(new Question(questionResultSetRow.get(1), Integer.parseInt(questionResultSetRow.get(0))));
-        }
-
-        ArrayList<ArrayList<String>> answersRS = questionsDB.getResultAsArrayList("SELECT * FROM answers WHERE " + answerMySqlWhereClause + " ORDER BY question_id", "id", "content", "isCorrect", "question_id");
-
-        int questionIndex = 0;
-        for (ArrayList<String> arraylist : answersRS) {
-            if (Integer.parseInt(arraylist.get(3)) != questions.get(questionIndex).getId()) {
-                questionIndex++;
+        try {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String content = rs.getString("content");
+                questions.add(new Question(id, content));
             }
-            questions.get(questionIndex).addAnswer(arraylist.get(1), parseBoolean(arraylist.get(2)));
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
 
-        Collections.shuffle(questions);
-        questionsDataBase = (ArrayList<Question>) questions.clone();
+        return questions;
     }
 
-    public String getAnswersMySqlWhereClause(String questionID) {
-        String whereClause = " OR ";
-        whereClause += "question_id =" + questionID;
-        return whereClause;
+    private ArrayList<Answer> getAnswers(String questionID) {
+        ResultSet answersRS = questionsDB.getResultSet("SELECT * FROM answers WHERE question_id = " + questionID);
+        return getAnswersFromResultSet(answersRS);
+    }
+
+    public ArrayList<Answer> getAnswersFromResultSet(ResultSet rs) {
+        ArrayList<Answer> answers = new ArrayList<>();
+        try {
+            while (rs.next()) {
+                String content = rs.getString("content");
+                boolean isCorrect = parseBoolean(rs.getString("isCorrect"));
+                answers.add(new Answer(content, isCorrect));
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        return answers;
+    }
+
+    private boolean parseBoolean(String value) {
+        return value.equals("1");
     }
 }
